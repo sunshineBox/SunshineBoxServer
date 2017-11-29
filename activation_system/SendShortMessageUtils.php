@@ -1,6 +1,6 @@
 <?php
 
-namespace MealPlanServer\register;
+namespace SunshineBoxServer\activation_system;
 //ini_set("display_errors", "on");
 
 require_once __DIR__ . '/sms_api_sdk/vendor/autoload.php';

@@ -5,9 +5,13 @@
  * Date: 2017/11/29
  * Time: 22:08
  */
+//ini_set("display_errors", "on");
+
+use SunshineBoxServer\activation_system\SendShortMessageUtils;
 
 require_once dirname(__DIR__) . "/data/DataBase.php";
 require_once dirname(__DIR__) . "/utils/DataBaseUtil.php";
+require_once __DIR__ . "/SendShortMessageUtils.php";
 
 $response_data = entrance();
 header('Content-Type: application/json');
@@ -40,7 +44,30 @@ function entrance(): array
     if ($stmt->fetch() == false) {
         return returnJson("001", "对不起，该手机号没有激活权限或已经激活");
     } else {
-        return returnJson("001", "该手机号可以激活");
+        //生成4位随机数作为验证码
+        $captcha = rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
+
+        //向阿里云发送：1.手机号 2.验证码
+        $response = SendShortMessageUtils::sendSms(
+            $phone_number,
+            Array(
+                "code" => $captcha
+            )
+        );
+
+        $creation_time = time();
+
+        if ($response->Message == 'OK') {
+            try {
+                $stmt = $db->prepare('INSERT INTO captcha_cache (phone_number,captcha,creation_time) VALUES (?,?,?)');
+                $stmt->execute([$phone_number, $captcha, $creation_time]);
+                return returnJson('001', "验证码发送成功");
+            } catch (PDOException $exception) {
+                return returnJson('401');
+            }
+        } else {
+            return returnJson('401');
+        }
     }
 
 }

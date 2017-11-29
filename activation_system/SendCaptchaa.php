@@ -6,7 +6,7 @@
  * Time: 13:56
  */
 
-use MealPlanServer\register\SendShortMessageUtils;
+use SunshineBoxServer\activation_system\SendShortMessageUtils;
 
 require_once __DIR__ . "/SendShortMessageUtils.php";
 
