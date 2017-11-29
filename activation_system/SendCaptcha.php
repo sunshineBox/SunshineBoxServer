@@ -42,7 +42,7 @@ function entrance(): array
     }
 
     if ($stmt->fetch() == false) {
-        return returnJson("001", "对不起，该手机号没有激活权限或已经激活");
+        return returnJson("001", "failure");
     } else {
         //生成4位随机数作为验证码
         $captcha = rand(0, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
@@ -61,7 +61,7 @@ function entrance(): array
             try {
                 $stmt = $db->prepare('INSERT INTO captcha_cache (phone_number,captcha,creation_time) VALUES (?,?,?)');
                 $stmt->execute([$phone_number, $captcha, $creation_time]);
-                return returnJson('001', "验证码发送成功");
+                return returnJson('001', "success");
             } catch (PDOException $exception) {
                 return returnJson('401');
             }
