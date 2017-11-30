@@ -5,11 +5,11 @@
  * Date: 2017/11/29
  * Time: 22:08
  */
+
 //ini_set("display_errors", "on");
 
 use SunshineBoxServer\activation_system\SendShortMessageUtils;
 
-require_once dirname(__DIR__) . "/data/DataBase.php";
 require_once dirname(__DIR__) . "/utils/DataBaseUtil.php";
 require_once __DIR__ . "/SendShortMessageUtils.php";
 
@@ -69,7 +69,4 @@ function entrance(): array
             return returnJson('401');
         }
     }
-
 }
-
-
