@@ -2,11 +2,13 @@
 /**
  * Created by PhpStorm.
  * User: shaol
- * Date: 2017/11/30
- * Time: 11:24
+ * Date: 2017/12/1
+ * Time: 10:51
  */
 
 require_once dirname(__DIR__) . "/utils/RequireUtil.php";
+
+//ini_set("display_errors", "on");
 
 $response_data = entrance();
 header('Content-Type: application/json');
@@ -19,7 +21,7 @@ function entrance(): array
         return returnJson('402');
     }
 
-    if (!isset($_POST['captcha'])) {
+    if (!isset($_POST['activation_code'])) {
         return returnJson('402');
     }
 
@@ -30,42 +32,38 @@ function entrance(): array
         return returnJson('401');
     }
 
-    //获取手机号和验证码
+    //获取手机号和激活码
     $phone_number = $_POST['phone_number'];
-    $captcha = $_POST['captcha'];
+    $activation_code = $_POST['activation_code'];
 
     try {
-        $stmt = $db->prepare("SELECT creation_time FROM captcha_cache WHERE phone_number LIKE ? AND captcha LIKE ?");
-        $stmt->execute([(string)$phone_number, (string)$captcha]);
+        $stmt = $db->prepare("SELECT is_activated from users WHERE phone_number LIKE ? AND activation_code LIKE ?");
+        $stmt->execute([(string)$phone_number, (string)$activation_code]);
     } catch (PDOException $exception) {
         return returnJson('401');
     }
 
     $result = $stmt->fetchAll(PDO::FETCH_NUM);
 
-
     if (count($result) == 0) {
-        //手机号与验证码不匹配
         return returnJson('001', 'incorrect');
     } else {
-        $now_time = time();
-
         foreach ($result as $item) {
-            if (($now_time - (int)$item[0]) > 300) {
-                //验证码过期
+            if ($item[0] == "true") {
                 return returnJson('001', 'expired');
-            } else {
-                //删除缓存数据库captcha_cache中全部与phone_number相关的行
+            } else if ($item[0] == "false") {
                 try {
-                    $stmt = $db->prepare("DELETE FROM captcha_cache WHERE phone_number LIKE ?");
-                    $stmt->execute([$phone_number]);
-                } catch (PDOException $e) {
+                    $stmt = $db->prepare("UPDATE users SET is_activated=\"true\" WHERE phone_number LIKE ?");
+                    $stmt->execute([(string)$phone_number]);
+                } catch (PDOException $exception) {
                     return returnJson('401');
                 }
                 return returnJson('001', 'success');
+            } else {
+                return returnJson('401');
             }
         }
     }
-
     return returnJson('401');
 }
+

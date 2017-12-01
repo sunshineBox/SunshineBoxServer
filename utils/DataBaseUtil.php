@@ -7,7 +7,7 @@
  */
 
 require_once dirname(__DIR__) . "/data/DataBase.php";
-require_once dirname(__DIR__) . "/utils/JsonUtil.php";
+
 
 //如果数据库连接失败，返回401
 function tryToConnectToTheDatabase(): PDO
