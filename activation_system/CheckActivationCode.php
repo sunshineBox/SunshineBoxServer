@@ -66,7 +66,7 @@ function entrance(): array
                 }
                 $result1 = $stmt->fetchAll();
                 foreach ($result1 as $item1) {
-                    return returnJson('001', 'success', ['uuid' => $result1]);
+                    return returnJson('001', 'success', ['uuid' => $item1]);
                 }
             } else {
                 return returnJson('401');
