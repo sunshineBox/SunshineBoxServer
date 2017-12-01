@@ -58,7 +58,16 @@ function entrance(): array
                 } catch (PDOException $exception) {
                     return returnJson('401');
                 }
-                return returnJson('001', 'success');
+                try {
+                    $stmt = $db->prepare("SELECT uuid FROM users WHERE phone_number LIKE ?");
+                    $stmt->execute([(string)$phone_number]);
+                } catch (PDOException $exception) {
+                    return returnJson('401');
+                }
+                $result1 = $stmt->fetchAll();
+                foreach ($result1 as $item1) {
+                    return returnJson('001', 'success', ['uuid' => $result1]);
+                }
             } else {
                 return returnJson('401');
             }
