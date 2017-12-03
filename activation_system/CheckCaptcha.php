@@ -85,7 +85,7 @@ function entrance(): array
                     return returnJson('401');
                 } else {
                     foreach ($result1 as $value) {
-                        return returnJson('001', 'success', ['uuid' => $value[0]]);
+                        return returnJson('001', $value[0]);
                     }
                 }
 
