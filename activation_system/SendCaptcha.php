@@ -10,7 +10,7 @@
 
 use SunshineBoxServer\activation_system\SendShortMessageUtils;
 
-require_once dirname(__DIR__) . "/utils/DataBaseUtil.php";
+require_once dirname(__DIR__) . "/utils/RequireUtil.php";
 require_once __DIR__ . "/SendShortMessageUtils.php";
 
 $response_data = entrance();

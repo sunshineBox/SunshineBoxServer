@@ -62,6 +62,33 @@ function entrance(): array
                 } catch (PDOException $e) {
                     return returnJson('401');
                 }
+
+                //更改数据库中的is_activated="true"
+                try {
+                    $stmt = $db->prepare("UPDATE users SET is_activated=\"true\" WHERE phone_number LIKE ?");
+                    $stmt->execute([$phone_number]);
+                } catch (PDOException $e) {
+                    return returnJson('401');
+                }
+
+                //查询数据库中的uuid
+                try {
+                    $stmt = $db->prepare("SELECT uuid FROM users WHERE phone_number LIKE ?");
+                    $stmt->execute([$phone_number]);
+                } catch (PDOException $e) {
+                    return returnJson('401');
+                }
+
+                $result1 = $stmt->fetchAll(PDO::FETCH_NUM);
+
+                if (count($result1) == 0) {
+                    return returnJson('401');
+                } else {
+                    foreach ($result1 as $value) {
+                        return returnJson('001', 'success', ['uuid' => $value[0]]);
+                    }
+                }
+
                 return returnJson('001', 'success');
             }
         }
