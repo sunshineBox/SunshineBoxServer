@@ -88,11 +88,8 @@ function entrance(): array
                         return returnJson('001', $value[0]);
                     }
                 }
-
-                return returnJson('001', 'success');
             }
         }
     }
-
     return returnJson('401');
 }
