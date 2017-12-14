@@ -6,7 +6,7 @@
  * Time: 16:54
  */
 
-require_once dirname(__DIR__) . "/utils/RequireUtil.php";
+require_once dirname(__DIR__) . "/utils/RequireUtils.php";
 //ini_set("display_errors", "on");
 
 $response_data = entrance();

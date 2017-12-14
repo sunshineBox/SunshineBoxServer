@@ -6,7 +6,7 @@
  * Time: 11:24
  */
 
-require_once dirname(__DIR__) . "/utils/RequireUtil.php";
+require_once dirname(__DIR__) . "/utils/RequireUtils.php";
 
 $response_data = entrance();
 header('Content-Type: application/json');
