@@ -7,7 +7,7 @@
  */
 
 require_once dirname(__DIR__) . "/utils/RequireUtil.php";
-ini_set("display_errors", "on");
+//ini_set("display_errors", "on");
 
 $response_data = entrance();
 header('Content-Type: application/json');
@@ -30,16 +30,24 @@ function entrance(): array
     $uuid = $_POST['uuid'];
 
     try {
-        $stmt = $db->prepare("UPDATE users SET is_activated=\"false\" WHERE uuid LIKE ?");
-        $stmt->execute([(string)$uuid]);
-        $count = $stmt->rowCount();
+        $stmt = sqlQuery($db, $uuid);
     } catch (PDOException $exception) {
         return returnJson('401');
     }
+
+
+    $count = $stmt->rowCount();
 
     if ($count == 1) {
         return returnJson("001", "success");
     } else {
         return returnJson("001", "failure");
     }
+}
+
+function sqlQuery(PDO $db, string $uuid): PDOStatement
+{
+    $stmt = $db->prepare("UPDATE users SET is_activated=\"false\" WHERE uuid LIKE ?");
+    $stmt->execute([(string)$uuid]);
+    return $stmt;
 }
