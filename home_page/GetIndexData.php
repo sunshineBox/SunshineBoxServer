@@ -36,18 +36,24 @@ function entrance(): array
 
     //查询数据库
     try {
-        $stmt = sqlQuery($db, $course_type, $max_last_modification_time);
+        $update_query_result = updateSqlQuery($db, $course_type, $max_last_modification_time);
     } catch (PDOException $exception) {
         return returnJson('401');
     } catch (Exception $exception) {
         return returnJson('001', 'failure');
     }
 
+    try {
+        $delete_query_result = deleteSqlQuery($db, $max_last_modification_time);
+    } catch (PDOException $exception) {
+        return returnJson('401');
+    }
+
     //返回JSON
-    return returnJson('001', 'success', $stmt->fetchAll());
+    return returnJson('001', 'success', ['update' => $update_query_result->fetchAll(), 'delete' => $delete_query_result->fetchAll()]);
 }
 
-function sqlQuery(PDO $db, string $course_type, string $max_last_modification_time): PDOStatement
+function updateSqlQuery(PDO $db, string $course_type, string $max_last_modification_time): PDOStatement
 {
     switch ($course_type) {
         case "music":
@@ -69,4 +75,11 @@ function sqlQuery(PDO $db, string $course_type, string $max_last_modification_ti
         default:
             throw new Exception('There is a problem with the value of $course_type');
     }
+}
+
+function deleteSqlQuery(PDO $db, string $max_last_modification_time): PDOStatement
+{
+    $stmt = $db->prepare("SELECT * FROM deleted_course WHERE time_deleted > (?)");
+    $stmt->execute([$max_last_modification_time]);
+    return $stmt;
 }
